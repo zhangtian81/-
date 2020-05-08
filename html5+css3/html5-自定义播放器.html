@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .player{
+            width: 720px;
+            height: 600px;
+            margin:0 auto;
+            background: url("./2014_preview.gif")  center no-repeat;
+            background-size: cover;
+            position: relative;
+            z-index: 99;   /* 放在最前面 */
+        }
+        video{
+            width: 720px;
+            height:100%;
+            margin:0 auto;
+            display: none;
+        }
+        .controls{
+            width: 720px;
+            height: 40px;
+            position: absolute;
+            left:0px;
+            bottom: -40px;
+            background-color: #000;
+        }
+        .controls > .switch{
+            width: 20px;
+            height: 20px;
+            display: block;
+            font-size: 20px;
+            background-color: #fff;
+            position: absolute;
+            left: 10px;
+            top:10px;
+        }
+        .controls > .expand{
+            width: 20px;
+            height: 20px;
+            display: block;
+            font-size: 20px;
+            background-color: #fff;
+            position: absolute;
+            right: 10px;
+            top:10px;
+        }
+        .controls > .progress{
+            width: 430px;
+            height: 10px;
+            position: absolute;
+            left: 40px;
+            bottom: 15px;
+            background-color: #555;
+        }
+        .controls > .progress > .bar{
+            width: 100%;
+            height: 100%;
+            border-radius: 3px;
+            cursor: pointer;
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            z-index: 99;   /* 放在最前面 */
+        }
+        .controls > .progress > .loaded{
+            width: 60%;
+            height: 100%;
+            background-color: #999;
+            border-radius: 3px;
+            position: absolute;
+            left: 0;
+            top: 0;
+            z-index: 3;
+        }
+        .controls > .time{
+            height: 20px;
+            position: absolute;
+            left: 490px;
+            top: 10px;
+            color: #fff;
+            font-size: 14px;
+        }
+    </style>   
+</head>
+<body>
+    <div class="player">
+        <video src="./01-复习.mp4" poster=""></video>
+        <div class="controls">
+            <!--注意href需要赋值，javascript:;返回空值，以防页面刷新-->
+            <a href="javascript:;" class="switch"></a>
+            <a href="javascript:;" class="expand"></a>
+            <div class="progress">
+                <!--响应点击时间-->
+                <div class="bar"></div>
+                <!--加载情况-->
+                <div class="loaded"></div>
+                <!--已播放-->
+                <div class="elapse"></div>
+            </div>
+            <div class="time">
+                <span class="currentTime">00:00:00</span>
+                /
+                <span class="totalTime">00:00:00</span>
+            </div>
+        </div>
+    </div>
+    <script src="./jquery-3.5.0.mim.js"></script>
+    <script>
+        $(function(){
+            // 1、获取播放器
+            var video = $("video")[0]; // 由于使用原生方法，需要在对象转换成DOM对象
+            // 2、实现播放与暂停
+            $(".switch").click(function(){
+                if(video.paused)  {
+                    video.play();
+                    // 移除暂停样式，加入播放样式
+                }else{
+                    video.pause();
+                    // 移除播放样式，加入暂停样式
+                }
+            });
+            // 3、实现全屏
+            $(".expand").click(function(){
+                /*使用能力测试添加不同浏览器下的前缀*/
+                if (video.requestFullscreen) {
+                    video.requestFullscreen();
+                } else if (video.webkitRequestFullScreen) {
+                    // 谷歌
+                    video.webkitRequestFullScreen();
+                } else if (video.mozRequestFullScreen) {
+                    // 火狐
+                    video.mozRequestFullScreen();
+                } else if (video.msRequestFullScreen) {
+                    // IE
+                    video.msRequestFullScreen();
+                }
+            });
+            // 4、视频可播放时，显示视频获取视频总时长并显示
+            video.oncanplay = function(){
+                setTimeout(function(){
+                    // 显示视频
+                    video.style.display = "block";
+                    //计算出视频的总时长
+                    $(".totalTime").html(timeTrans(video.duration));
+                },1000);
+            }
+            // 5、实现播放进度显示
+            video.ontimeupdate = function(){
+                // 获取当前播放时长
+                var cTime = video.currentTime;
+                var tTime = video.duration;
+                $('.currentTime').html(timeTrans(cTime));
+                // 设置播放进度
+                $('.loaded').css('width', cTime/tTime*100+"%");
+            }
+            // 6、实现点击跳转
+            $('.bar').click(function(e){
+                // 获取点击位置相对于全长的百分比
+                var percent = e['offsetX']/$(this).width(); // $('.bar').width()
+                // 计算需要跳转到的时间
+                var t = percent*video.duration;
+                // 设置视频当前时间
+                video.currentTime = t;
+            });
+            // 处理时间函数
+            var timeTrans = function(time){
+                var h = Math.floor(time/3600);
+                var m = Math.floor(time%3600/60);
+                var s = Math.floor(time%3600%60);
+                h = h>10?h:"0"+h;
+                m = m>10?m:"0"+m;
+                s = s>10?s:"0"+s;
+                return h+":"+m+":"+s;
+            }
+        });
+    </script>
+</body>
+</html>
