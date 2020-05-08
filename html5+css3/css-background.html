@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    /* 实现长图填充且居中显示 */
+    div{
+        width: 100%;
+        height: 360px;
+        background: url('./img/红包来了长图.jpg');
+        background-size: cover; /* 图片按最大填充，可能会溢出*/
+        background-position: center; /*背景填充居中*/
+    }
+    /* 提升移动端响应区域的大小，容器实际比图片大，从而扩大响应区域 */
+    a{
+        width: 150px;
+        height: 150px;
+        display: block;
+        margin: 50px auto;
+        padding: 41px;
+        box-sizing: border-box;
+        background-color: yellowgreen;
+        background-image: url('./img/箭头.jpg');
+        /* 设置背景偏移 */
+        background-position: 8px 7px;
+        /* 设置背景坐标原点
+            padding-box：从padding位置填充，会与padding重叠
+            border-box：从border位置填充
+            content-box：从内容位置填充  
+        */
+        background-origin: content-box;
+        /* 设置内容裁切，设置裁切，控制的是显示
+            padding-box：显示的是padding内的内容
+            border-box：显示的是border内的内容
+            content-box：显示的是content内的内容
+        */
+        background-clip: content-box;
+    }
+</style>
+<body>
+    <div></div>
+    <a href="javascript:;"></a>
+</body>
+</html>
